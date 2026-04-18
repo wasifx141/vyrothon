@@ -1,31 +1,44 @@
-/** One node instance in an ordered cascade (identity + which cipher + its config). */
-export type PipelineNode = {
-  instanceId: string
+/** Config bag for a cipher instance — all values are JSON-serializable scalars. */
+export type CipherConfig = Record<string, string | number>
+
+export type CipherDirection = 'encrypt' | 'decrypt'
+
+/** One node instance in an ordered cascade (stable id + cipher + config). */
+export type NodeInstance = {
+  id: string
   cipherId: string
-  config: unknown
+  config: CipherConfig
 }
 
+/** @deprecated Use NodeInstance — alias for existing imports */
+export type PipelineNode = NodeInstance
+
 export type PipelineStep = {
-  instanceId: string
+  nodeId: string
+  nodeName: string
   cipherId: string
-  label: string
   input: string
   output: string
 }
 
-export type PipelineRunResult = {
-  output: string
+export type PipelineResult = {
+  finalOutput: string
   steps: PipelineStep[]
 }
 
-export type CipherDirection = 'encrypt' | 'decrypt'
+/** @deprecated Use PipelineResult */
+export type PipelineRunResult = PipelineResult
 
-export type CipherDefinition<TConfig> = {
+/**
+ * Registered cipher: defaults + validate + encrypt/decrypt.
+ * UI color/icon live in `cipher-ui.ts` (presentation layer).
+ */
+export type CipherDefinition<T extends CipherConfig = CipherConfig> = {
   id: string
   label: string
   description: string
-  defaultConfig: TConfig
-  validateConfig: (config: TConfig) => string | null
-  encrypt: (input: string, config: TConfig) => string
-  decrypt: (input: string, config: TConfig) => string
+  defaultConfig: T
+  validateConfig: (config: CipherConfig) => string | null
+  encrypt: (input: string, config: CipherConfig) => string
+  decrypt: (input: string, config: CipherConfig) => string
 }

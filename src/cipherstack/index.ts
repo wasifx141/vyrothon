@@ -1,7 +1,10 @@
 export type {
+  CipherConfig,
   CipherDefinition,
   CipherDirection,
+  NodeInstance,
   PipelineNode,
+  PipelineResult,
   PipelineRunResult,
   PipelineStep,
 } from './types'
@@ -12,6 +15,7 @@ export {
   PipelineError,
   runDecryptPipeline,
   runEncryptPipeline,
+  runPipeline,
 } from './pipeline'
 export {
   exportPipelineSnapshot,
@@ -20,7 +24,8 @@ export {
   PipelineSnapshotError,
   type PipelineSnapshot,
 } from './pipelineSnapshot'
-export { getCipherDefinition, listCipherDefinitions } from './registry'
+export { cipherRegistry, getCipherDefinition, listCipherDefinitions } from './registry'
+export { validatePipelineNodes } from './validate'
 export {
   allCipherDefinitions,
   caesarCipher,
@@ -35,3 +40,9 @@ export type {
   XorConfig,
 } from './ciphers'
 export { pipelinePresets, type PipelinePreset } from './presets'
+export {
+  newNodeId,
+  nodeFromCipherId,
+  presetPipeline,
+  starterPipeline,
+} from './nodeFactory'

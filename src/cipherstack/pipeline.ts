@@ -1,5 +1,10 @@
 import { getCipherDefinition } from './registry'
-import type { PipelineNode, PipelineRunResult, PipelineStep } from './types'
+import type {
+  CipherDirection,
+  PipelineNode,
+  PipelineResult,
+  PipelineStep,
+} from './types'
 
 export const MIN_PIPELINE_NODES = 3
 const MIN_NODES = MIN_PIPELINE_NODES
@@ -27,11 +32,22 @@ function resolveCipher(cipherId: string) {
   return def
 }
 
+/** Run pipeline for the given mode (encrypt = forward, decrypt = inverse chain). */
+export function runPipeline(
+  nodes: PipelineNode[],
+  input: string,
+  direction: CipherDirection,
+): PipelineResult {
+  return direction === 'encrypt'
+    ? runEncryptPipeline(nodes, input)
+    : runDecryptPipeline(nodes, input)
+}
+
 /** Forward: plaintext → node1 → node2 → … → ciphertext */
 export function runEncryptPipeline(
   nodes: PipelineNode[],
   plaintext: string,
-): PipelineRunResult {
+): PipelineResult {
   assertMinNodes(nodes)
   const steps: PipelineStep[] = []
   let current = plaintext
@@ -48,23 +64,23 @@ export function runEncryptPipeline(
       throw new PipelineError(`${def.label} (encrypt): ${msg}`)
     }
     steps.push({
-      instanceId: node.instanceId,
+      nodeId: node.id,
       cipherId: node.cipherId,
-      label: def.label,
+      nodeName: def.label,
       input: current,
       output: next,
     })
     current = next
   }
 
-  return { output: current, steps }
+  return { finalOutput: current, steps }
 }
 
 /** Backward: ciphertext → inverse(last) → … → inverse(first) → plaintext */
 export function runDecryptPipeline(
   nodes: PipelineNode[],
   ciphertext: string,
-): PipelineRunResult {
+): PipelineResult {
   assertMinNodes(nodes)
   const steps: PipelineStep[] = []
   let current = ciphertext
@@ -82,16 +98,16 @@ export function runDecryptPipeline(
       throw new PipelineError(`${def.label} (decrypt): ${msg}`)
     }
     steps.push({
-      instanceId: node.instanceId,
+      nodeId: node.id,
       cipherId: node.cipherId,
-      label: def.label,
+      nodeName: def.label,
       input: current,
       output: next,
     })
     current = next
   }
 
-  return { output: current, steps }
+  return { finalOutput: current, steps }
 }
 
 /** Encrypt then decrypt — must match original for a correct stack. */
@@ -100,6 +116,6 @@ export function assertRoundTrip(
   plaintext: string,
 ): { ok: boolean; recovered: string } {
   const enc = runEncryptPipeline(nodes, plaintext)
-  const dec = runDecryptPipeline(nodes, enc.output)
-  return { ok: dec.output === plaintext, recovered: dec.output }
+  const dec = runDecryptPipeline(nodes, enc.finalOutput)
+  return { ok: dec.finalOutput === plaintext, recovered: dec.finalOutput }
 }

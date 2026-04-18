@@ -1,0 +1,47 @@
+import { getCipherDefinition } from './registry'
+import type { PipelineNode } from './types'
+
+export function newNodeId(): string {
+  return crypto.randomUUID()
+}
+
+export function nodeFromCipherId(cipherId: string): PipelineNode {
+  const def = getCipherDefinition(cipherId)
+  if (!def) throw new Error(`Unknown cipher: ${cipherId}`)
+  return {
+    id: newNodeId(),
+    cipherId,
+    config: { ...def.defaultConfig },
+  }
+}
+
+export function starterPipeline(): PipelineNode[] {
+  return [
+    nodeFromCipherId('caesar'),
+    nodeFromCipherId('vigenere'),
+    nodeFromCipherId('xor'),
+  ]
+}
+
+export function presetPipeline(kind: 'classic' | 'max' | 'demo'): PipelineNode[] {
+  if (kind === 'classic') {
+    return [
+      nodeFromCipherId('caesar'),
+      nodeFromCipherId('vigenere'),
+      nodeFromCipherId('xor'),
+    ]
+  }
+  if (kind === 'max') {
+    return [
+      nodeFromCipherId('caesar'),
+      nodeFromCipherId('vigenere'),
+      nodeFromCipherId('railFence'),
+      nodeFromCipherId('xor'),
+    ]
+  }
+  return [
+    nodeFromCipherId('caesar'),
+    nodeFromCipherId('xor'),
+    nodeFromCipherId('railFence'),
+  ]
+}

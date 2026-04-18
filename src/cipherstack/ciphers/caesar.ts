@@ -29,9 +29,11 @@ export const caesarCipher: CipherDefinition<CaesarConfig> = {
   description: 'Shifts each letter by a fixed amount in the Latin alphabet.',
   defaultConfig: { shift: 3 },
   validateConfig: (config) => {
-    if (!Number.isFinite(config.shift)) return 'Shift must be a number.'
+    if (!Number.isFinite(Number(config.shift))) return 'Shift must be a number.'
     return null
   },
-  encrypt: (input, config) => transform(input, config.shift, true),
-  decrypt: (input, config) => transform(input, config.shift, false),
+  encrypt: (input, config) =>
+    transform(input, Number(config.shift), true),
+  decrypt: (input, config) =>
+    transform(input, Number(config.shift), false),
 }

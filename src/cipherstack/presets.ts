@@ -17,41 +17,45 @@ export const pipelinePresets: PipelinePreset[] = [
     id: 'starter',
     label: 'Starter',
     hint: 'Caesar → Vigenère → XOR',
-    build: () => [
-      { instanceId: nid(), cipherId: 'caesar', config: { shift: 3 } },
-      { instanceId: nid(), cipherId: 'vigenere', config: { keyword: 'hack' } },
-      { instanceId: nid(), cipherId: 'xor', config: { key: 'ab' } },
-    ],
+    build: () =>
+      [
+        { id: nid(), cipherId: 'caesar', config: { shift: 3 } },
+        { id: nid(), cipherId: 'vigenere', config: { keyword: 'hack' } },
+        { id: nid(), cipherId: 'xor', config: { key: 'ab' } },
+      ] as PipelineNode[],
   },
   {
     id: 'quad',
     label: '4-node',
     hint: 'Double Caesar bookends',
-    build: () => [
-      { instanceId: nid(), cipherId: 'caesar', config: { shift: 7 } },
-      { instanceId: nid(), cipherId: 'vigenere', config: { keyword: 'stack' } },
-      { instanceId: nid(), cipherId: 'xor', config: { key: 'xy' } },
-      { instanceId: nid(), cipherId: 'caesar', config: { shift: 11 } },
-    ],
+    build: () =>
+      [
+        { id: nid(), cipherId: 'caesar', config: { shift: 7 } },
+        { id: nid(), cipherId: 'vigenere', config: { keyword: 'stack' } },
+        { id: nid(), cipherId: 'xor', config: { key: 'xy' } },
+        { id: nid(), cipherId: 'caesar', config: { shift: 11 } },
+      ] as PipelineNode[],
   },
   {
     id: 'xorFirst',
     label: 'XOR lead',
     hint: 'XOR → Caesar → Vigenère',
-    build: () => [
-      { instanceId: nid(), cipherId: 'xor', config: { key: 'k1' } },
-      { instanceId: nid(), cipherId: 'caesar', config: { shift: 4 } },
-      { instanceId: nid(), cipherId: 'vigenere', config: { keyword: 'demo' } },
-    ],
+    build: () =>
+      [
+        { id: nid(), cipherId: 'xor', config: { key: 'k1' } },
+        { id: nid(), cipherId: 'caesar', config: { shift: 4 } },
+        { id: nid(), cipherId: 'vigenere', config: { keyword: 'demo' } },
+      ] as PipelineNode[],
   },
   {
     id: 'railMix',
     label: 'Rail mix',
     hint: 'Caesar → Rail fence → XOR',
-    build: () => [
-      { instanceId: nid(), cipherId: 'caesar', config: { shift: 5 } },
-      { instanceId: nid(), cipherId: 'railFence', config: { rails: 4 } },
-      { instanceId: nid(), cipherId: 'xor', config: { key: 'z9' } },
-    ],
+    build: () =>
+      [
+        { id: nid(), cipherId: 'caesar', config: { shift: 5 } },
+        { id: nid(), cipherId: 'railFence', config: { rails: 4 } },
+        { id: nid(), cipherId: 'xor', config: { key: 'z9' } },
+      ] as PipelineNode[],
   },
 ]

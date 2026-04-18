@@ -55,6 +55,8 @@ export const vigenereCipher: CipherDefinition<VigenereConfig> = {
     }
     return null
   },
-  encrypt: (input, config) => vigenereTransform(input, config.keyword, true),
-  decrypt: (input, config) => vigenereTransform(input, config.keyword, false),
+  encrypt: (input, config) =>
+    vigenereTransform(input, String(config.keyword), true),
+  decrypt: (input, config) =>
+    vigenereTransform(input, String(config.keyword), false),
 }

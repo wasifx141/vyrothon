@@ -10,9 +10,9 @@ import { xorCipher } from './xor'
 import { vigenereCipher } from './vigenere'
 
 /** All built-in configurable ciphers (≥3 required for the hackathon). */
-export const allCipherDefinitions: CipherDefinition<unknown>[] = [
-  caesarCipher as CipherDefinition<unknown>,
-  xorCipher as CipherDefinition<unknown>,
-  vigenereCipher as CipherDefinition<unknown>,
-  railFenceCipher as CipherDefinition<unknown>,
+export const allCipherDefinitions: CipherDefinition[] = [
+  caesarCipher,
+  xorCipher,
+  vigenereCipher,
+  railFenceCipher,
 ]

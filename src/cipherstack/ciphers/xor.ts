@@ -53,7 +53,7 @@ export const xorCipher: CipherDefinition<XorConfig> = {
   encrypt: (input, config) => {
     if (input.length === 0) return ''
     const data = encoder.encode(input)
-    const key = encoder.encode(config.key)
+    const key = encoder.encode(String(config.key))
     return bytesToHex(xorRepeat(data, key))
   },
   decrypt: (input, config) => {
@@ -65,7 +65,7 @@ export const xorCipher: CipherDefinition<XorConfig> = {
     if (data.length === 0) {
       throw new Error('Invalid hex input for XOR decrypt.')
     }
-    const key = encoder.encode(config.key)
+    const key = encoder.encode(String(config.key))
     return decoder.decode(xorRepeat(data, key))
   },
 }

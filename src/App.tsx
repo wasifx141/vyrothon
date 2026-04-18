@@ -1,17 +1,13 @@
-import { useEffect } from 'react'
+import { AppToaster } from './components/AppToaster'
 import { PipelineWorkbench } from './components/PipelineWorkbench'
-import './App.css'
+import { ThemeProvider } from './components/ThemeProvider'
 
 function App() {
-  useEffect(() => {
-    document.body.classList.add('app-cipherstack')
-    return () => document.body.classList.remove('app-cipherstack')
-  }, [])
-
   return (
-    <div className="cs-root">
+    <ThemeProvider>
+      <AppToaster />
       <PipelineWorkbench />
-    </div>
+    </ThemeProvider>
   )
 }
 

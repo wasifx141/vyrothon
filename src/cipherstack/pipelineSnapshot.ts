@@ -1,6 +1,6 @@
 import { getCipherDefinition } from './registry'
 import { MIN_PIPELINE_NODES } from './pipeline'
-import type { PipelineNode } from './types'
+import type { CipherConfig, PipelineNode } from './types'
 
 export const PIPELINE_SNAPSHOT_VERSION = 1 as const
 
@@ -11,7 +11,7 @@ export type PipelineSnapshot = {
   }
 }
 
-function newInstanceId(): string {
+function newNodeId(): string {
   return crypto.randomUUID()
 }
 
@@ -82,15 +82,15 @@ export function importPipelineSnapshot(json: string): PipelineNode[] {
     if (!def) {
       throw new PipelineSnapshotError(`Unknown cipher: "${cipherId}".`)
     }
-    const config = row.config
+    const config = row.config as CipherConfig
     const err = def.validateConfig(config)
     if (err) {
       throw new PipelineSnapshotError(`${def.label} (node ${i}): ${err}`)
     }
     nodes.push({
-      instanceId: newInstanceId(),
+      id: newNodeId(),
       cipherId,
-      config: structuredClone(config),
+      config: structuredClone(config) as CipherConfig,
     })
   }
 

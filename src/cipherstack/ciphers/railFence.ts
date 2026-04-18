@@ -61,12 +61,12 @@ export const railFenceCipher: CipherDefinition<RailFenceConfig> = {
     'Zigzag transposition: text is written down rails and read row by row.',
   defaultConfig: { rails: 3 },
   validateConfig: (config) => {
-    const r = config.rails
+    const r = Number(config.rails)
     if (!Number.isInteger(r)) return 'Rails must be an integer.'
     if (r < 2) return 'Use at least 2 rails.'
     if (r > 64) return 'Rails must be at most 64.'
     return null
   },
-  encrypt: (input, config) => encryptText(input, config.rails),
-  decrypt: (input, config) => decryptText(input, config.rails),
+  encrypt: (input, config) => encryptText(input, Number(config.rails)),
+  decrypt: (input, config) => decryptText(input, Number(config.rails)),
 }
