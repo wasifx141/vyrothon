@@ -102,7 +102,7 @@ export function ControlPanel(p: Props) {
             : 'Paste ciphertext to decrypt…'
         }
         spellCheck={false}
-        className="w-full resize-none rounded-md border border-input bg-background px-3 py-2.5 font-mono-c text-[13px] text-foreground placeholder:text-muted-foreground transition focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring/40"
+        className="box-border min-h-[7.5rem] w-full resize-none rounded-md border border-input bg-background px-3 py-3 font-mono-c text-[13px] leading-normal text-foreground placeholder:text-muted-foreground transition focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring/40"
       />
 
       <label className="group mt-3 flex cursor-pointer items-center gap-2.5">
