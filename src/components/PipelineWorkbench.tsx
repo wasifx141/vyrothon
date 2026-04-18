@@ -4,9 +4,10 @@ import { toast } from 'sonner'
 import type { CipherListItem } from '@/cipher-ui'
 import {
   assertRoundTrip,
+  buildPreset,
   MIN_PIPELINE_NODES,
   newNodeId,
-  presetPipeline,
+  pipelinePresets,
   starterPipeline,
   type PipelineNode,
 } from '@/cipherstack'
@@ -56,6 +57,8 @@ export function PipelineWorkbench() {
   }, [])
 
   useEffect(() => {
+    /* clear action errors when the pipeline or input context changes */
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional reset on dependency change
     setInteractionError(null)
   }, [inputText, nodes, mode])
 
@@ -122,10 +125,12 @@ export function PipelineWorkbench() {
   )
 
   const onPreset = useCallback(
-    (preset: 'classic' | 'max' | 'demo') => {
-      setNodes(presetPipeline(preset))
+    (presetId: string) => {
+      const label =
+        pipelinePresets.find((p) => p.id === presetId)?.label ?? presetId
+      setNodes(buildPreset(presetId))
       clearAfterStructureChange()
-      toast.success(`Loaded ${preset} preset`)
+      toast.success(`Loaded ${label}`)
     },
     [clearAfterStructureChange],
   )
@@ -201,6 +206,7 @@ export function PipelineWorkbench() {
           setInputText={(s) => {
             setInputText(s)
             setRoundTrip(null)
+            setHasRun(false)
           }}
           livePreview={livePreview}
           setLivePreview={setLivePreview}

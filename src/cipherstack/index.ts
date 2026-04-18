@@ -41,6 +41,7 @@ export type {
 } from './ciphers'
 export { pipelinePresets, type PipelinePreset } from './presets'
 export {
+  buildPreset,
   newNodeId,
   nodeFromCipherId,
   presetPipeline,

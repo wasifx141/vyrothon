@@ -14,6 +14,7 @@ import {
   Zap,
 } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
+import { pipelinePresets } from '@/cipherstack'
 
 export type Mode = 'encrypt' | 'decrypt'
 
@@ -33,7 +34,7 @@ interface Props {
   dna: string
   onExport: () => void
   onImport: (file: File) => void
-  onPreset: (preset: 'classic' | 'max' | 'demo') => void
+  onPreset: (presetId: string) => void
   canRun: boolean
 }
 
@@ -272,23 +273,7 @@ export function ControlPanel(p: Props) {
               exit={{ opacity: 0, y: -6 }}
               className="absolute left-0 right-0 z-20 mt-1 overflow-hidden rounded-md border border-border bg-popover shadow-lg"
             >
-              {[
-                {
-                  id: 'classic' as const,
-                  label: 'Classic Stack',
-                  desc: 'Caesar + Vigenère + XOR',
-                },
-                {
-                  id: 'max' as const,
-                  label: 'Max Security',
-                  desc: 'All 4 main ciphers',
-                },
-                {
-                  id: 'demo' as const,
-                  label: 'Quick Demo',
-                  desc: 'Caesar + XOR + Rail fence',
-                },
-              ].map((opt) => (
+              {pipelinePresets.map((opt) => (
                 <button
                   key={opt.id}
                   type="button"
@@ -302,7 +287,7 @@ export function ControlPanel(p: Props) {
                     {opt.label}
                   </div>
                   <div className="mt-0.5 text-[10.5px] text-muted-foreground">
-                    {opt.desc}
+                    {opt.hint}
                   </div>
                 </button>
               ))}

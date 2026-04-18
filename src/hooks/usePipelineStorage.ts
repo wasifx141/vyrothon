@@ -4,6 +4,7 @@ import {
   exportPipelineSnapshot,
   getCipherDefinition,
   importPipelineSnapshot,
+  MIN_PIPELINE_NODES,
   PipelineSnapshotError,
 } from '@/cipherstack'
 import type { CipherConfig, PipelineNode } from '@/cipherstack'
@@ -63,6 +64,11 @@ export function usePipelineStorage() {
         })
       }
       if (restored.length === 0) throw new Error('No valid nodes in file')
+      if (restored.length < MIN_PIPELINE_NODES) {
+        throw new Error(
+          `Need at least ${MIN_PIPELINE_NODES} nodes (got ${restored.length}).`,
+        )
+      }
       toast.success(`Imported ${restored.length} nodes`)
       return restored
     } catch (e) {

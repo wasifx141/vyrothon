@@ -19,19 +19,22 @@ function zigzagIndices(rails: number, len: number): number[] {
 
 function encryptText(text: string, rails: number): string {
   if (rails < 2) return text
-  const n = text.length
+  /** Unicode code points — avoids splitting surrogate pairs (emoji, etc.). */
+  const chars = [...text]
+  const n = chars.length
   if (n === 0) return ''
   const idx = zigzagIndices(rails, n)
   const rows: string[][] = Array.from({ length: rails }, () => [])
   for (let i = 0; i < n; i++) {
-    rows[idx[i]!]!.push(text[i]!)
+    rows[idx[i]!]!.push(chars[i]!)
   }
   return rows.map((row) => row.join('')).join('')
 }
 
 function decryptText(text: string, rails: number): string {
   if (rails < 2) return text
-  const n = text.length
+  const chars = [...text]
+  const n = chars.length
   if (n === 0) return ''
   const idx = zigzagIndices(rails, n)
   const counts = Array(rails).fill(0)
@@ -40,7 +43,7 @@ function decryptText(text: string, rails: number): string {
   }
   let offset = 0
   const buckets = counts.map((c) => {
-    const part = text.slice(offset, offset + c).split('')
+    const part = chars.slice(offset, offset + c)
     offset += c
     return part
   })
@@ -58,7 +61,7 @@ export const railFenceCipher: CipherDefinition<RailFenceConfig> = {
   id: 'railFence',
   label: 'Rail fence',
   description:
-    'Zigzag transposition: text is written down rails and read row by row.',
+    'Zigzag transposition on Unicode code points (emoji-safe); read row by row.',
   defaultConfig: { rails: 3 },
   validateConfig: (config) => {
     const r = Number(config.rails)

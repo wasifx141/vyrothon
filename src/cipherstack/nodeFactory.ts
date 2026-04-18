@@ -1,4 +1,5 @@
 import { getCipherDefinition } from './registry'
+import { pipelinePresets } from './presets'
 import type { PipelineNode } from './types'
 
 export function newNodeId(): string {
@@ -16,32 +17,19 @@ export function nodeFromCipherId(cipherId: string): PipelineNode {
 }
 
 export function starterPipeline(): PipelineNode[] {
-  return [
-    nodeFromCipherId('caesar'),
-    nodeFromCipherId('vigenere'),
-    nodeFromCipherId('xor'),
-  ]
+  const starter = pipelinePresets.find((p) => p.id === 'starter')
+  return starter ? starter.build() : [
+      nodeFromCipherId('caesar'),
+      nodeFromCipherId('vigenere'),
+      nodeFromCipherId('xor'),
+    ]
 }
 
-export function presetPipeline(kind: 'classic' | 'max' | 'demo'): PipelineNode[] {
-  if (kind === 'classic') {
-    return [
-      nodeFromCipherId('caesar'),
-      nodeFromCipherId('vigenere'),
-      nodeFromCipherId('xor'),
-    ]
-  }
-  if (kind === 'max') {
-    return [
-      nodeFromCipherId('caesar'),
-      nodeFromCipherId('vigenere'),
-      nodeFromCipherId('railFence'),
-      nodeFromCipherId('xor'),
-    ]
-  }
-  return [
-    nodeFromCipherId('caesar'),
-    nodeFromCipherId('xor'),
-    nodeFromCipherId('railFence'),
-  ]
+/** Loads a curated stack by preset id (see `pipelinePresets`). */
+export function buildPreset(presetId: string): PipelineNode[] {
+  const p = pipelinePresets.find((x) => x.id === presetId)
+  return p ? p.build() : starterPipeline()
 }
+
+/** @deprecated Use `buildPreset` */
+export const presetPipeline = buildPreset
