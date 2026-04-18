@@ -7,7 +7,10 @@ import {
   type CipherDirection,
   type PipelineNode,
   type PipelineResult,
+  type PipelineStep,
 } from '@/cipherstack'
+
+const EMPTY_STEPS: PipelineStep[] = []
 import { useDebouncedValue } from './useDebouncedValue'
 
 function extractError(e: unknown): string {
@@ -27,9 +30,15 @@ export function usePipeline(
     options.livePreview ? options.debounceMs : 0,
   )
 
-  const configErrors = useMemo(() => validatePipelineNodes(nodes), [nodes])
-  const isValid =
-    nodes.length >= MIN_PIPELINE_NODES && Object.keys(configErrors).length === 0
+  const { configErrors, hasConfigErrors } = useMemo(() => {
+    const errors = validatePipelineNodes(nodes)
+    return {
+      configErrors: errors,
+      hasConfigErrors: Object.keys(errors).length > 0,
+    }
+  }, [nodes])
+
+  const isValid = nodes.length >= MIN_PIPELINE_NODES && !hasConfigErrors
 
   const { result, pipelineError } = useMemo(() => {
     if (nodes.length < MIN_PIPELINE_NODES) {
@@ -38,7 +47,7 @@ export function usePipeline(
         pipelineError: null as string | null,
       }
     }
-    if (Object.keys(configErrors).length > 0) {
+    if (hasConfigErrors) {
       return { result: null, pipelineError: null }
     }
     try {
@@ -49,7 +58,7 @@ export function usePipeline(
     } catch (e) {
       return { result: null, pipelineError: extractError(e) }
     }
-  }, [nodes, debouncedInput, direction, configErrors])
+  }, [nodes, debouncedInput, direction, hasConfigErrors])
 
   const [isRunning, setIsRunning] = useState(false)
   const [activeNodeId, setActiveNodeId] = useState<string | null>(null)
@@ -71,7 +80,7 @@ export function usePipeline(
 
   return {
     result,
-    steps: result?.steps ?? [],
+    steps: result?.steps ?? EMPTY_STEPS,
     finalOutput: result?.finalOutput ?? '',
     pipelineError,
     isValid,

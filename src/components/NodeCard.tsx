@@ -1,4 +1,9 @@
-import { memo, useState, type CSSProperties } from 'react'
+import {
+  memo,
+  useState,
+  type ComponentPropsWithoutRef,
+  type CSSProperties,
+} from 'react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -13,10 +18,14 @@ import { getCipherUI } from '@/cipher-ui'
 import type { CipherConfig } from '@/cipherstack/types'
 import type { PipelineNode } from '@/cipherstack/types'
 
+type DragHandleProps = ComponentPropsWithoutRef<'button'>
+
 interface NodeCardProps {
   node: PipelineNode
   index: number
   total: number
+  dragHandleProps: DragHandleProps
+  isDragging: boolean
   onConfigChange: (id: string, config: CipherConfig) => void
   onRemove: (id: string) => void
   onMoveUp: (id: string) => void
@@ -30,6 +39,8 @@ const NodeCard = memo(function NodeCard({
   node,
   index,
   total,
+  dragHandleProps,
+  isDragging,
   onConfigChange,
   onRemove,
   onMoveUp,
@@ -46,9 +57,17 @@ const NodeCard = memo(function NodeCard({
   return (
     <>
       <div className="flex items-start gap-3">
-        <div className="mt-0.5 shrink-0 select-none text-muted-foreground/50 pointer-events-none">
-          <GripVertical size={16} />
-        </div>
+        <button
+          type="button"
+          {...dragHandleProps}
+          aria-label="Drag to reorder pipeline"
+          title="Drag to reorder"
+          className={`mt-0.5 shrink-0 touch-none rounded p-0.5 text-muted-foreground transition hover:bg-secondary hover:text-foreground ${
+            isDragging ? 'cursor-grabbing' : 'cursor-grab'
+          }`}
+        >
+          <GripVertical size={16} strokeWidth={2.25} />
+        </button>
 
         <div
           className="grid h-8 w-8 shrink-0 place-items-center rounded-md font-mono-c text-sm font-bold text-white"
@@ -235,12 +254,15 @@ export function SortableNodeRow({
     zIndex: isDragging ? 50 : undefined,
   }
 
+  const dragHandleProps = {
+    ...attributes,
+    ...listeners,
+  } as DragHandleProps
+
   return (
     <motion.div
       ref={setNodeRef}
       style={style}
-      {...attributes}
-      {...(listeners as Record<string, unknown>)}
       layout
       initial={{ opacity: 0, y: 8, scale: 0.98 }}
       animate={
@@ -255,13 +277,15 @@ export function SortableNodeRow({
           : { type: 'spring', stiffness: 320, damping: 28 }
       }
       className={`relative rounded-lg border border-border border-l-[3px] bg-card p-4 transition-colors hover:border-foreground/20 ${
-        isDragging ? 'cursor-grabbing' : 'cursor-grab'
+        isDragging ? 'cursor-grabbing' : 'cursor-default'
       } ${active ? 'node-active ring-1 ring-ring/40' : ''}`}
     >
       <NodeCard
         node={node}
         index={index}
         total={total}
+        dragHandleProps={dragHandleProps}
+        isDragging={isDragging}
         onConfigChange={onConfigChange}
         onRemove={onRemove}
         onMoveUp={onMoveUp}

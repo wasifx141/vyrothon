@@ -138,6 +138,27 @@ export function PipelineWorkbench() {
     [clearAfterStructureChange],
   )
 
+  const handleSetMode = useCallback((m: Mode) => {
+    setMode(m)
+    setRoundTrip(null)
+    setInteractionError(null)
+    setHasRun(false)
+  }, [setHasRun])
+
+  const handleSetInputText = useCallback((s: string) => {
+    setInputText(s)
+    setRoundTrip(null)
+    setHasRun(false)
+  }, [setHasRun])
+
+  const onAddFromLibrary = useCallback(
+    (c: CipherListItem) => {
+      onAdd(c)
+      setMobileTab('pipeline')
+    },
+    [onAdd],
+  )
+
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
@@ -192,7 +213,7 @@ export function PipelineWorkbench() {
         <div
           className={`${mobileTab === 'library' ? 'flex' : 'hidden'} w-full flex-col md:flex md:w-auto`}
         >
-          <CipherLibrary onAdd={(c) => { onAdd(c); setMobileTab('pipeline') }} />
+          <CipherLibrary onAdd={onAddFromLibrary} />
         </div>
 
         {/* Pipeline Canvas — full-screen on mobile when active */}
@@ -220,18 +241,9 @@ export function PipelineWorkbench() {
         >
           <ControlPanel
             mode={mode}
-            setMode={(m) => {
-              setMode(m)
-              setRoundTrip(null)
-              setInteractionError(null)
-              setHasRun(false)
-            }}
+            setMode={handleSetMode}
             inputText={inputText}
-            setInputText={(s) => {
-              setInputText(s)
-              setRoundTrip(null)
-              setHasRun(false)
-            }}
+            setInputText={handleSetInputText}
             livePreview={livePreview}
             setLivePreview={setLivePreview}
             onRun={onRun}

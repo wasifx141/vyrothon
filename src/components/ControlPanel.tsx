@@ -13,7 +13,7 @@ import {
   XCircle,
   Zap,
 } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import { memo, useEffect, useRef, useState } from 'react'
 import { pipelinePresets } from '@/cipherstack'
 
 export type Mode = 'encrypt' | 'decrypt'
@@ -38,7 +38,7 @@ interface Props {
   canRun: boolean
 }
 
-export function ControlPanel(p: Props) {
+export const ControlPanel = memo(function ControlPanel(p: Props) {
   const [presetOpen, setPresetOpen] = useState(false)
   const [copied, setCopied] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
@@ -297,4 +297,4 @@ export function ControlPanel(p: Props) {
       </div>
     </aside>
   )
-}
+})

@@ -14,7 +14,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
 import type { Dispatch, SetStateAction } from 'react'
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import { getCipherUI } from '@/cipher-ui'
 import type { CipherConfig } from '@/cipherstack/types'
@@ -99,7 +99,10 @@ export function PipelineCanvas({
   )
 
   const ready = nodes.length >= 3
-  const stepByNode = new Map(steps.map((s) => [s.nodeId, s]))
+  const stepByNode = useMemo(
+    () => new Map(steps.map((s) => [s.nodeId, s] as const)),
+    [steps],
+  )
 
   return (
     <div className="h-full flex-1 overflow-y-auto bg-background px-4 py-5 md:px-8 md:py-7">
