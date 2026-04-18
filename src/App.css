@@ -1,0 +1,112 @@
+.cs-root {
+  min-height: 100%;
+}
+
+.cs-app {
+  text-align: left;
+  padding: 2rem 1.5rem 4rem;
+  max-width: 42rem;
+  margin: 0 auto;
+}
+
+.cs-header {
+  margin-bottom: 2rem;
+}
+
+.cs-eyebrow {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 0.5rem;
+}
+
+.cs-title {
+  font-size: 2rem;
+  letter-spacing: -0.03em;
+  margin: 0 0 0.75rem;
+}
+
+.cs-lead {
+  margin: 0;
+  max-width: 36rem;
+}
+
+.cs-panel {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.25rem 1.25rem;
+  margin-bottom: 1rem;
+  background: color-mix(in srgb, var(--bg) 92%, var(--code-bg));
+}
+
+.cs-panel h2 {
+  font-size: 1.1rem;
+  margin: 0 0 0.75rem;
+}
+
+.cs-panel p {
+  margin: 0 0 0.75rem;
+  max-width: 40rem;
+}
+
+.cs-panel p:last-child {
+  margin-bottom: 0;
+}
+
+.cs-dna code {
+  font-size: 0.95rem;
+  word-break: break-all;
+}
+
+.cs-steps {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.cs-steps li {
+  margin-bottom: 0.35rem;
+}
+
+.cs-steps li.done {
+  color: var(--text-h);
+}
+
+.cs-steps li:not(.done) {
+  opacity: 0.75;
+}
+
+.cs-lib {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.cs-lib li {
+  margin-bottom: 0.5rem;
+}
+
+.cs-lib-id {
+  font-family: var(--mono);
+  font-size: 0.9em;
+  color: var(--accent);
+}
+
+.cs-muted {
+  font-size: 0.92rem;
+  opacity: 0.9;
+  margin-bottom: 0.75rem !important;
+}
+
+.cs-pre {
+  margin: 0;
+  padding: 1rem;
+  border-radius: 8px;
+  background: var(--code-bg);
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  line-height: 1.45;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
