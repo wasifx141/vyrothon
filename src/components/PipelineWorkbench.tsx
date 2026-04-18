@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { TerminalSquare } from 'lucide-react'
+import { BookOpen, TerminalSquare, Settings, Workflow } from 'lucide-react'
 import { toast } from 'sonner'
 import type { CipherListItem } from '@/cipher-ui'
 import {
@@ -20,9 +20,12 @@ import { IntermediateSteps } from './IntermediateSteps'
 import { PipelineCanvas } from './PipelineCanvas'
 import { ThemeToggle } from './ThemeToggle'
 
+type MobileTab = 'library' | 'pipeline' | 'control'
+
 export function PipelineWorkbench() {
   const [nodes, setNodes] = useState<PipelineNode[]>(starterPipeline)
   const [mode, setMode] = useState<Mode>('encrypt')
+  const [mobileTab, setMobileTab] = useState<MobileTab>('pipeline')
   const [inputText, setInputText] = useState('Hello, World! 123')
   const [livePreview, setLivePreview] = useState(true)
   const [interactionError, setInteractionError] = useState<string | null>(null)
@@ -151,24 +154,31 @@ export function PipelineWorkbench() {
 
   const gatedSteps = hasRun || livePreview ? steps : []
 
+  const mobileTabs: { id: MobileTab; label: string; Icon: typeof BookOpen }[] = [
+    { id: 'library', label: 'Library', Icon: BookOpen },
+    { id: 'pipeline', label: 'Pipeline', Icon: Workflow },
+    { id: 'control', label: 'Control', Icon: Settings },
+  ]
+
   return (
-    <div className="flex h-screen min-h-0 flex-col bg-background text-foreground">
-      <header className="flex h-14 shrink-0 items-center justify-between border-b border-border bg-card px-6">
-        <div className="flex items-center gap-3">
-          <div className="grid h-9 w-9 place-items-center rounded-md bg-foreground text-background">
-            <TerminalSquare size={17} />
+    <div className="flex h-[100dvh] min-h-0 flex-col bg-background text-foreground">
+      <header className="flex h-12 shrink-0 items-center justify-between border-b border-border bg-card px-4 md:h-14 md:px-6">
+        <div className="flex items-center gap-2.5 md:gap-3">
+          <div className="grid h-8 w-8 place-items-center rounded-md bg-foreground text-background md:h-9 md:w-9">
+            <TerminalSquare size={15} className="md:hidden" />
+            <TerminalSquare size={17} className="hidden md:block" />
           </div>
           <div>
-            <h1 className="font-display text-[17px] font-bold leading-none tracking-tight text-foreground">
+            <h1 className="font-display text-[15px] font-bold leading-none tracking-tight text-foreground md:text-[17px]">
               CipherStack
             </h1>
-            <p className="mt-1 text-[10.5px] tracking-wide text-muted-foreground">
+            <p className="mt-0.5 hidden text-[10.5px] tracking-wide text-muted-foreground sm:block md:mt-1">
               Cascade Encryption Pipeline
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 md:gap-3">
           <div className="hidden items-center gap-2 rounded-md border border-border bg-secondary px-2.5 py-1.5 font-mono-c text-[10.5px] text-muted-foreground md:flex">
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-success" />
             client-side · zero-network
@@ -177,9 +187,18 @@ export function PipelineWorkbench() {
         </div>
       </header>
 
-      <div className="flex min-h-0 flex-1">
-        <CipherLibrary onAdd={onAdd} />
-        <main className="flex min-h-0 min-w-0 flex-1 flex-col">
+      <div className="flex min-h-0 flex-1 overflow-hidden">
+        {/* Cipher Library — full-screen on mobile when active, fixed sidebar on desktop */}
+        <div
+          className={`${mobileTab === 'library' ? 'flex' : 'hidden'} w-full flex-col md:flex md:w-auto`}
+        >
+          <CipherLibrary onAdd={(c) => { onAdd(c); setMobileTab('pipeline') }} />
+        </div>
+
+        {/* Pipeline Canvas — full-screen on mobile when active */}
+        <main
+          className={`${mobileTab === 'pipeline' ? 'flex' : 'hidden'} min-h-0 min-w-0 flex-1 flex-col md:flex`}
+        >
           <div className="min-h-0 flex-1 overflow-y-auto">
             <PipelineCanvas
               nodes={nodes}
@@ -189,40 +208,72 @@ export function PipelineWorkbench() {
               direction={mode}
               isRunning={isRunning}
             />
-            <div className="px-8 pb-8">
+            <div className="px-4 pb-4 md:px-8 md:pb-8">
               <IntermediateSteps steps={gatedSteps} direction={mode} />
             </div>
           </div>
         </main>
-        <ControlPanel
-          mode={mode}
-          setMode={(m) => {
-            setMode(m)
-            setRoundTrip(null)
-            setInteractionError(null)
-            setHasRun(false)
-          }}
-          inputText={inputText}
-          setInputText={(s) => {
-            setInputText(s)
-            setRoundTrip(null)
-            setHasRun(false)
-          }}
-          livePreview={livePreview}
-          setLivePreview={setLivePreview}
-          onRun={onRun}
-          onVerify={onVerify}
-          output={output}
-          error={errorMessage}
-          isRunning={isRunning}
-          roundTrip={roundTrip}
-          dna={dna}
-          onExport={onExport}
-          onImport={onImport}
-          onPreset={onPreset}
-          canRun={canRun}
-        />
+
+        {/* Control Panel — full-screen on mobile when active, fixed sidebar on desktop */}
+        <div
+          className={`${mobileTab === 'control' ? 'flex' : 'hidden'} w-full flex-col md:flex md:w-auto`}
+        >
+          <ControlPanel
+            mode={mode}
+            setMode={(m) => {
+              setMode(m)
+              setRoundTrip(null)
+              setInteractionError(null)
+              setHasRun(false)
+            }}
+            inputText={inputText}
+            setInputText={(s) => {
+              setInputText(s)
+              setRoundTrip(null)
+              setHasRun(false)
+            }}
+            livePreview={livePreview}
+            setLivePreview={setLivePreview}
+            onRun={onRun}
+            onVerify={onVerify}
+            output={output}
+            error={errorMessage}
+            isRunning={isRunning}
+            roundTrip={roundTrip}
+            dna={dna}
+            onExport={onExport}
+            onImport={onImport}
+            onPreset={onPreset}
+            canRun={canRun}
+          />
+        </div>
       </div>
+
+      {/* Mobile bottom tab navigation */}
+      <nav className="flex shrink-0 border-t border-border bg-card md:hidden">
+        {mobileTabs.map(({ id, label, Icon }) => (
+          <button
+            key={id}
+            type="button"
+            onClick={() => setMobileTab(id)}
+            className={`relative flex flex-1 flex-col items-center justify-center gap-1 py-2.5 text-[10px] font-semibold uppercase tracking-wider transition-colors ${
+              mobileTab === id
+                ? 'text-foreground'
+                : 'text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            <Icon
+              size={18}
+              strokeWidth={mobileTab === id ? 2.4 : 1.8}
+              className={mobileTab === id ? 'text-foreground' : ''}
+            />
+            {label}
+            {mobileTab === id && (
+              <span className="absolute bottom-0 h-0.5 w-10 rounded-t-full bg-foreground" />
+            )}
+          </button>
+        ))}
+      </nav>
     </div>
   )
 }

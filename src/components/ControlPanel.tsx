@@ -56,7 +56,7 @@ export function ControlPanel(p: Props) {
   }
 
   return (
-    <aside className="flex h-full w-[340px] shrink-0 flex-col overflow-y-auto border-l border-border bg-card p-5">
+    <aside className="flex h-full w-full flex-col overflow-y-auto border-l border-border bg-card p-4 md:w-[340px] md:shrink-0 md:p-5">
       <div className="text-eyebrow mb-2">Mode</div>
       <div className="relative mb-5 grid grid-cols-2 rounded-lg border border-border bg-secondary p-1">
         <motion.div

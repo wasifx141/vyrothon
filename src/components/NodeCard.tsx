@@ -9,7 +9,6 @@ import {
   GripVertical,
   X,
 } from 'lucide-react'
-import type { DraggableAttributes } from '@dnd-kit/core'
 import { getCipherUI } from '@/cipher-ui'
 import type { CipherConfig } from '@/cipherstack/types'
 import type { PipelineNode } from '@/cipherstack/types'
@@ -18,8 +17,6 @@ interface NodeCardProps {
   node: PipelineNode
   index: number
   total: number
-  dragAttributes: DraggableAttributes
-  dragListeners: Record<string, unknown> | undefined
   onConfigChange: (id: string, config: CipherConfig) => void
   onRemove: (id: string) => void
   onMoveUp: (id: string) => void
@@ -33,8 +30,6 @@ const NodeCard = memo(function NodeCard({
   node,
   index,
   total,
-  dragAttributes,
-  dragListeners,
   onConfigChange,
   onRemove,
   onMoveUp,
@@ -51,15 +46,9 @@ const NodeCard = memo(function NodeCard({
   return (
     <>
       <div className="flex items-start gap-3">
-        <button
-          type="button"
-          {...dragAttributes}
-          {...(dragListeners as Record<string, () => void>)}
-          className="mt-0.5 shrink-0 cursor-grab text-muted-foreground transition-colors hover:text-foreground active:cursor-grabbing"
-          aria-label="Drag to reorder"
-        >
+        <div className="mt-0.5 shrink-0 select-none text-muted-foreground/50 pointer-events-none">
           <GripVertical size={16} />
-        </button>
+        </div>
 
         <div
           className="grid h-8 w-8 shrink-0 place-items-center rounded-md font-mono-c text-sm font-bold text-white"
@@ -241,30 +230,38 @@ export function SortableNodeRow({
 
   const style: CSSProperties = {
     transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.5 : 1,
+    transition: isDragging ? 'none' : transition,
     borderLeftColor: accent,
+    zIndex: isDragging ? 50 : undefined,
   }
 
   return (
     <motion.div
       ref={setNodeRef}
       style={style}
+      {...attributes}
+      {...(listeners as Record<string, unknown>)}
       layout
       initial={{ opacity: 0, y: 8, scale: 0.98 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
+      animate={
+        isDragging
+          ? { opacity: 1, scale: 1.03, boxShadow: '0 24px 48px rgba(0,0,0,0.22)' }
+          : { opacity: 1, y: 0, scale: 1, boxShadow: '0 0px 0px rgba(0,0,0,0)' }
+      }
       exit={{ opacity: 0, x: 40, scale: 0.96 }}
-      transition={{ type: 'spring', stiffness: 320, damping: 28 }}
+      transition={
+        isDragging
+          ? { type: 'spring', stiffness: 500, damping: 30 }
+          : { type: 'spring', stiffness: 320, damping: 28 }
+      }
       className={`relative rounded-lg border border-border border-l-[3px] bg-card p-4 transition-colors hover:border-foreground/20 ${
-        active ? 'node-active ring-1 ring-ring/40' : ''
-      }`}
+        isDragging ? 'cursor-grabbing' : 'cursor-grab'
+      } ${active ? 'node-active ring-1 ring-ring/40' : ''}`}
     >
-        <NodeCard
-          node={node}
-          index={index}
-          total={total}
-          dragAttributes={attributes}
-        dragListeners={listeners as Record<string, unknown> | undefined}
+      <NodeCard
+        node={node}
+        index={index}
+        total={total}
         onConfigChange={onConfigChange}
         onRemove={onRemove}
         onMoveUp={onMoveUp}

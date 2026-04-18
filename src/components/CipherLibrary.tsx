@@ -9,7 +9,7 @@ interface Props {
 export function CipherLibrary({ onAdd }: Props) {
   const items = listCipherListItems()
   return (
-    <aside className="flex h-full w-[280px] shrink-0 flex-col overflow-y-auto border-r border-border bg-card p-5">
+    <aside className="flex h-full w-full flex-col overflow-y-auto border-r border-border bg-card p-4 md:w-[280px] md:shrink-0 md:p-5">
       <div className="mb-5">
         <div className="text-eyebrow mb-1">Cipher Library</div>
       </div>

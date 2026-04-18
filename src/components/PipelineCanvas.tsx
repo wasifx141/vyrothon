@@ -40,7 +40,7 @@ export function PipelineCanvas({
   isRunning,
 }: Props) {
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     }),
@@ -102,8 +102,8 @@ export function PipelineCanvas({
   const stepByNode = new Map(steps.map((s) => [s.nodeId, s]))
 
   return (
-    <div className="h-full flex-1 overflow-y-auto bg-background px-8 py-7">
-      <header className="mb-6 flex items-end justify-between">
+    <div className="h-full flex-1 overflow-y-auto bg-background px-4 py-5 md:px-8 md:py-7">
+      <header className="mb-5 flex flex-wrap items-end justify-between gap-3 md:mb-6">
         <div>
           <div className="text-eyebrow">Pipeline</div>
           <h1 className="font-display mt-1 text-2xl font-bold leading-none text-foreground">
@@ -135,7 +135,9 @@ export function PipelineCanvas({
             Your pipeline is empty
           </div>
           <p className="mt-2 text-sm text-muted-foreground">
-            Add at least 3 ciphers from the library on the left
+            Add at least 3 ciphers from the{' '}
+            <span className="md:hidden">Library tab</span>
+            <span className="hidden md:inline">library on the left</span>
           </p>
         </div>
       ) : (
